@@ -1,15 +1,6 @@
 # mcMMO
 ## The #1 RPG Mod for Minecraft
 
-## Website
-I'm working on a brand new website for mcMMO
-
-You can check it out here http://www.mcmmo.org
-
-Spigot Resource: https://spigot.mcmmo.org
-
-I plan to post links to our new wiki (its still under development), downloads, and dev blogs there.
-
 ## API
 If you are using maven, you can add mcMMO API to your plugin by adding it to pom.xml like so...
 
