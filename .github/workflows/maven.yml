@@ -50,5 +50,5 @@ jobs:
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ceMMO
-        path: target/*.jar
+        name: ceMMO.jar
+        path: target/mcMMO.jar
