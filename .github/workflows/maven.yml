@@ -1,21 +1,16 @@
-# This workflow automatically tests new commits and pull requests as they come in.
-# Note that this does not upload any artifacts, you will need to compile mcMMO manually
-# if you wish to create the actual jar.
-name: Compile and test
+# This workflow automatically compiles and tests commits and pull requests
+# and uploads the resulting .jar artifact.
+
+name: Compile, test, and archive JAR
 
 on:
-  # We run our tests whenever the pom or a source file was touched.
-  # There is no need to run Maven when only the changelog was touched.
-  # We may also want to re-run this workflow when the workflow file itself
-  # was updated too.
+  # Run workflow on pushes or pull requests involving source files or the pom.xml.
   push:
     paths:
     - 'src/**'
     - 'pom.xml'
     - '.github/workflows/maven.yml'
 
-  # Whenever someone submits a new pull request which modified the pom or a source file,
-  # we want to ensure it compiles successfully and that all tests will pass.
   pull_request:
     paths:
     - 'src/**'
@@ -23,7 +18,7 @@ on:
 
 jobs:
   compile:
-    name: Maven compiler
+    name: Maven compile and archive JAR
     runs-on: ubuntu-latest
     steps:
 
@@ -31,7 +26,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # 2. Setup Java 17 JDK (Adopt)
+    # 2. Set up Java 17 JDK (Adopt)
     - name: Java 17 setup
       uses: actions/setup-java@v2
       with:
@@ -39,7 +34,7 @@ jobs:
         java-package: jdk
         java-version: '17'
 
-    # 3. Setup local Maven package cache to speed up building
+    # 3. Set up Maven package cache to speed up builds
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
@@ -47,6 +42,13 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    # 4. Build via Maven 
+    # 4. Build the project with Maven
     - name: Build via Maven
-      run: mvn verify -B --file pom.xml -DdisableXmlReport=true
+      run: mvn package -B --file pom.xml -DdisableXmlReport=true
+
+    # 5. Upload the resulting .jar artifact
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ceMMO
+        path: target/*.jar
